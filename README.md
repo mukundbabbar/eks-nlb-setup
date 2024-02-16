@@ -30,6 +30,7 @@ MODIFY POLICY (Known issue)
 ------
 //if error in nlb svc logs/describe command, modify the logged iam policy and remove extra permissions
 ///////NOTE - Policy bug fix - add policy rule conditions
+```
  {
             "Effect": "Allow",
             "Action": [
@@ -52,6 +53,7 @@ MODIFY POLICY (Known issue)
                 }
             }
         }
+```
 ///////
 
 
