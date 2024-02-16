@@ -55,5 +55,6 @@ MODIFY POLICY
 
 //modify loadbalancer.yaml with public subnets
 k apply -f loadbalancer.yaml
+k apply -f otel-loadbalancer.yaml
 //check svc if external ip is assigned
 k get svc
