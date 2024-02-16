@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: app-sa
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-frontend
+spec:
+  selector:
+    matchLabels:
+      name: web-frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: web-frontend
+        name: web-frontend
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"
+    spec:
+      serviceAccountName: app-sa
+      containers:
+        - name: web-frontend
+          image: mukundbabbar/java-app-services:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 8080
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: web-frontend
+  name: web-frontend
+spec:
+  selector:
+    app: web-frontend
+  ports:
+  - name: "8080"
+    port: 8080
+    targetPort: 8080
