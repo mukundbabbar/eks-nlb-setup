@@ -1,0 +1,51 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: k8s-apac-mb
+  region: ap-southeast-2
+  version: "1.22"
+vpc:
+  subnets:
+    private: 
+      private-1a: { id: subnet-0b7d8eca52646aaa9 }
+      private-1b: { id: subnet-03ca3280a3cf0bc06 }
+    public:
+      public-1a: { id: subnet-01607cd4ea4607cf0 }
+      public-1b: { id: subnet-056d86551b20fe40e }
+  nat:
+    gateway: Single
+  clusterEndpoints:
+    publicAccess:  true
+    privateAccess: false
+iam:
+  withOIDC: true
+  serviceAccounts:
+    - metadata:
+        name: aws-load-balancer-controller
+        namespace: kube-system
+      wellKnownPolicies:
+        awsLoadBalancerController: true
+  vpcResourceControllerPolicy: true
+kubernetesNetworkConfig:
+  ipFamily: IPv4
+managedNodeGroups:
+- amiFamily: AmazonLinux2
+  desiredCapacity: 2
+  iam:
+    withAddonPolicies:
+      albIngress: true
+  instanceType: m5.large
+  labels:
+    alpha.eksctl.io/cluster-name: k8s-apac-mb
+    alpha.eksctl.io/nodegroup-name: ng-apac-mb
+  maxSize: 2
+  minSize: 2
+  name: ng-apac-mb
+  tags:
+    alpha.eksctl.io/nodegroup-name: ng-apac-mb
+    alpha.eksctl.io/nodegroup-type: managed
+  volumeIOPS: 3000
+  volumeSize: 80
+  volumeThroughput: 125
+  subnets:
+    - public-1a
