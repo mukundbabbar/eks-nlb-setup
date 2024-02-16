@@ -1,22 +1,24 @@
 # eks-nlb-setup
 
+PREREQ
+----
+EKSCTL, AWSCLI SETUP
 
 UI
 ----
 //Create VPC with 2 public and 2 private subnet, set auto assign public ip on public subnets
 
-PREREQ
-----
-EKSCTL, AWSCLI SETUP
-
 EKSCTL
 -------
 //Create K8s cluster using above networks
+//update public and private subnets and region details in eks-cluster.yaml file
 eksctl create cluster -f eks-cluster.yaml 
 
 K8S ADD CONTROLLER
 -----
+//deploy sample app
 k apply -f web-frontend.yaml
+//deploy lb controller
 helm install aws-load-balancer-controller \
   eks/aws-load-balancer-controller \
   --namespace kube-system \
@@ -24,9 +26,9 @@ helm install aws-load-balancer-controller \
   --set serviceAccount.create=false \
   --set serviceAccount.name=aws-load-balancer-controller
 
-MODIFY POLICY
+MODIFY POLICY (Known issue)
 ------
-//modify iam policy and remove lines 
+//if error in nlb svc logs/describe command, modify the logged iam policy and remove extra permissions
 ///////NOTE - Policy bug fix - add policy rule conditions
  {
             "Effect": "Allow",
@@ -53,7 +55,7 @@ MODIFY POLICY
 ///////
 
 
-//modify loadbalancer.yaml with public subnets
+//modify loadbalancer config files with public subnets
 k apply -f loadbalancer.yaml
 k apply -f otel-loadbalancer.yaml
 //check svc if external ip is assigned
