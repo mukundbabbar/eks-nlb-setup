@@ -73,3 +73,5 @@ k apply -f otel-loadbalancer.yaml
 ```
 k get svc
 ```
+
+//App should not be available on external ip
